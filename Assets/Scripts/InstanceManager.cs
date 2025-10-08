@@ -9,8 +9,9 @@ public class InstanceManager : MonoBehaviour
     public PlayerControls controls;
     void Start()
     {
-        GameObject test = Instantiate(currentPuzzle, Vector3.zero, Quaternion.identity);
-        test.transform.parent = null;
+        GameObject test = Instantiate(currentPuzzle, transform);
+        test.transform.localPosition = transform.position;
+        //test.transform.parent = null;
 
         if (test.TryGetComponent<PicrossHintManager>(out PicrossHintManager o))
             currentPuzzleHints = o;

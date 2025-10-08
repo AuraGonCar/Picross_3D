@@ -220,7 +220,7 @@ GameObject:
   - component: {fileID: 3496465098814913470}
   - component: {fileID: 6201985752765864877}
   m_Layer: 0
-  m_Name: PicrossPlaceholderPiece
+  m_Name: PicrossPiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

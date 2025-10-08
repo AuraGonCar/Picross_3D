@@ -219,9 +219,9 @@ MonoBehaviour:
   TargetOffset: {x: 0, y: 0, z: 0}
   TrackerSettings:
     BindingMode: 0
-    PositionDamping: {x: 1, y: 1, z: 1}
+    PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
-    RotationDamping: {x: 1, y: 1, z: 1}
+    RotationDamping: {x: 0, y: 0, z: 0}
     QuaternionDamping: 1
   OrbitStyle: 0
   Radius: 10
@@ -1523,7 +1523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4f953fa76d92054fa1dfc86eda7ed6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InstanceManager
-  currentPuzzle: {fileID: 7186062980020318734, guid: 81b9723512369cb44b87202123a26c6b, type: 3}
+  currentPuzzle: {fileID: 3084239776122192780, guid: 325655705b23920499c39afafbce2937, type: 3}
   currentPuzzleHints: {fileID: 0}
   vCam: {fileID: 231135539}
   controls: {fileID: 566876394}
@@ -1536,7 +1536,7 @@ Transform:
   m_GameObject: {fileID: 1707828239}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.14074, y: 0.08282, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
