@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-public class LayerSlider : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
+public class LayerSlider : MonoBehaviour
 {
     public Slider currentSlider;
 
@@ -12,17 +12,5 @@ public class LayerSlider : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 
     private bool active;
 
-    
-    public void OnPointerDown(PointerEventData eventData)
-    {
-        parent.BeginLayerControl();
-        parent.layerDetection.DisableAllLayerControlException(this.gameObject);
 
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        parent.EndLayerControl();
-        
-    }
 }

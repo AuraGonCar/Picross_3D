@@ -127,6 +127,15 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Wheel"",
+                    ""type"": ""Value"",
+                    ""id"": ""aab4af29-41f4-4cc3-8117-99899365a272"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -171,6 +180,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Position"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3441ee98-2850-4705-a4f1-c35ab7253fe0"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Wheel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -246,6 +266,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         m_PicrossActions_Mark = m_PicrossActions.FindAction("Mark", throwIfNotFound: true);
         m_PicrossActions_Destroy = m_PicrossActions.FindAction("Destroy", throwIfNotFound: true);
         m_PicrossActions_Position = m_PicrossActions.FindAction("Position", throwIfNotFound: true);
+        m_PicrossActions_Wheel = m_PicrossActions.FindAction("Wheel", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -330,6 +351,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     private readonly InputAction m_PicrossActions_Mark;
     private readonly InputAction m_PicrossActions_Destroy;
     private readonly InputAction m_PicrossActions_Position;
+    private readonly InputAction m_PicrossActions_Wheel;
     /// <summary>
     /// Provides access to input actions defined in input action map "PicrossActions".
     /// </summary>
@@ -357,6 +379,10 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "PicrossActions/Position".
         /// </summary>
         public InputAction @Position => m_Wrapper.m_PicrossActions_Position;
+        /// <summary>
+        /// Provides access to the underlying input action "PicrossActions/Wheel".
+        /// </summary>
+        public InputAction @Wheel => m_Wrapper.m_PicrossActions_Wheel;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -395,6 +421,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Position.started += instance.OnPosition;
             @Position.performed += instance.OnPosition;
             @Position.canceled += instance.OnPosition;
+            @Wheel.started += instance.OnWheel;
+            @Wheel.performed += instance.OnWheel;
+            @Wheel.canceled += instance.OnWheel;
         }
 
         /// <summary>
@@ -418,6 +447,9 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
             @Position.started -= instance.OnPosition;
             @Position.performed -= instance.OnPosition;
             @Position.canceled -= instance.OnPosition;
+            @Wheel.started -= instance.OnWheel;
+            @Wheel.performed -= instance.OnWheel;
+            @Wheel.canceled -= instance.OnWheel;
         }
 
         /// <summary>
@@ -551,5 +583,12 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPosition(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Wheel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnWheel(InputAction.CallbackContext context);
     }
 }

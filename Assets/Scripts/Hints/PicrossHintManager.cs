@@ -23,16 +23,7 @@ public class PicrossHintManager : MonoBehaviour
     [SerializeField] List<PicrossFace> xFaces = new List<PicrossFace>();
     [SerializeField] List<PicrossFace> zFaces = new List<PicrossFace>();
     [Space]
-    [Header("Face sliders")]
-    [SerializeField] Slider minXSlider1;
-    [SerializeField] Slider minXSlider2;
-    [SerializeField] Slider maxXSlider1;
-    [SerializeField] Slider maxXSlider2;
-    [Space]
-    [SerializeField] Slider minZSlider1;
-    [SerializeField] Slider minZSlider2;
-    [SerializeField] Slider maxZSlider1;
-    [SerializeField] Slider maxZSlider2;
+    
     [Header("Puzzle hint values")]
     public PicrossPiece selectedPiece;
     public int randomCorrectPieces;
@@ -41,7 +32,6 @@ public class PicrossHintManager : MonoBehaviour
     [HideInInspector] public InstanceManager parent;
     public PicrossLayerDetectionManagement layerDetection;
 
-    public List<LayerSlider> currentSelectedAxis = new List<LayerSlider>();
     public void SetDictionary()
     {
         if (piecesInPuzzleDictionary.Count <= 0)
@@ -147,38 +137,6 @@ public class PicrossHintManager : MonoBehaviour
             f.SetFace(newZFace, i);
             zFaces.Add(f);
         }
-
-        SetSlidersX();
-        SetSlidersZ();
-    }
-
-    private void SetSlidersX()
-    {
-        minXSlider1.minValue = minXPosition;
-        minXSlider1.maxValue = maxXPosition;
-
-        minXSlider2.minValue = minXPosition;
-        minXSlider2.maxValue = maxXPosition;
-
-        maxXSlider1.minValue = minXPosition;
-        maxXSlider1.maxValue = maxXPosition;
-
-        maxXSlider2.minValue = minXPosition;
-        maxXSlider2.maxValue = maxXPosition;
-    }
-    private void SetSlidersZ()
-    {
-        minZSlider1.minValue = minXPosition;
-        minZSlider1.maxValue = maxXPosition;
-
-        minZSlider2.minValue = minXPosition;
-        minZSlider2.maxValue = maxXPosition;
-
-        maxZSlider1.minValue = minXPosition;
-        maxZSlider1.maxValue = maxXPosition;
-
-        maxZSlider2.minValue = minXPosition;
-        maxZSlider2.maxValue = maxXPosition;
     }
     
     public void SetHintValues()
@@ -345,78 +303,63 @@ public class PicrossHintManager : MonoBehaviour
     }
 
 
-    public void SetFaceValueX(LayerSlider slider)
+    public void SetFaceValueX(PicrossLayerControl currentLayer, int inputValue)
     {
-        if (slider.isMax)
-        {
-            int value = (int)(slider.currentSlider.value *-1);
-
-            for (int i = xFaces.Count-1; i >= 0; i--)
-            {
-                if (xFaces[i].assignedValue > value)
-                {
-                    xFaces[i].DeactivateFace();
-                }
-
-                if (xFaces[i].assignedValue <= value)
-                {
-                    xFaces[i].ActivateFace();
-                }
-            }
-        }
-        else
-        {
-            for (int i = 0; i < xFaces.Count; i++)
-            {
-                if (xFaces[i].assignedValue < slider.currentSlider.value)
-                {
-                    xFaces[i].DeactivateFace();
-                }
-
-                if (xFaces[i].assignedValue >= slider.currentSlider.value)
-                {
-                    xFaces[i].ActivateFace();
-                }
-            }
-        }
-        
+        UpdateFaces(currentLayer, inputValue, xFaces);
     }
 
-    public void SetFaceValueZ(LayerSlider slider)
+    public void SetFaceValueZ(PicrossLayerControl currentLayer, int inputValue)
     {
-        if (slider.isMax)
+        UpdateFaces(currentLayer, inputValue, zFaces);
+    }
+
+    public void UpdateFaces(PicrossLayerControl currentLayer, int inputValue, List<PicrossFace> faces)
+    {
+        Debug.Log(inputValue);
+        if (currentLayer.isMax)
         {
-            int value = (int)(slider.currentSlider.value * -1);
+            currentLayer.RemoveValue(inputValue);
 
-            for (int i = zFaces.Count-1; i >= 0; i--)
+            if (currentLayer.IsCurrentValueOriginal())
             {
-                if (zFaces[i].assignedValue > value)
-                {
-                    zFaces[i].DeactivateFace();
-                }
+                faces[faces.Count - 1].ActivateFace();
+                currentLayer.Deactivate();
+                return;
+            }
 
-                if (xFaces[i].assignedValue <= value)
-                {
-                    zFaces[i].ActivateFace();
-                }
+            currentLayer.SetActive();
+
+            for (int i = zFaces.Count - 1; i >= 0; i--)
+            {
+                if (faces[i].assignedValue > currentLayer.currentValue)
+                    faces[i].DeactivateFace();
+
+                else
+                    faces[i].ActivateFace();
             }
         }
         else
         {
-            for (int i = 0; i < zFaces.Count; i++)
-            {
-                if (zFaces[i].assignedValue < slider.currentSlider.value)
-                {
-                    zFaces[i].DeactivateFace();
-                }
+            currentLayer.AddValue(inputValue);
 
-                if (zFaces[i].assignedValue >= slider.currentSlider.value)
-                {
-                    zFaces[i].ActivateFace();
-                }
+            if (currentLayer.IsCurrentValueOriginal())
+            {
+                faces[0].ActivateFace();
+                currentLayer.Deactivate();
+                return;
+            }
+
+            currentLayer.SetActive();
+
+            for (int i = 0; i < faces.Count; i++)
+            {
+                if (faces[i].assignedValue < currentLayer.currentValue)
+                    faces[i].DeactivateFace();
+
+                else
+                    faces[i].ActivateFace();
             }
         }
-        
     }
 
     public void BeginLayerControl()
@@ -429,7 +372,13 @@ public class PicrossHintManager : MonoBehaviour
         parent.controls.ChangeControls(PicrossMode.None);
     }
 
-
+    public void CheckLayers(PicrossLayerControl currentActiveLayer, int value)
+    {
+        if (currentActiveLayer.layerX)
+            SetFaceValueX(currentActiveLayer, value);
+        if (currentActiveLayer.layerZ)
+            SetFaceValueZ(currentActiveLayer, value);
+    }
     //Hint showing and hiding
 
     public void ShowHintsX()
@@ -518,6 +467,7 @@ public class PicrossFace
     public bool faceActive = true;
 
     public int assignedValue;
+
     public void SetFace(List<PicrossPiece> newFace, int newValue)
     {
         assignedValue = newValue;

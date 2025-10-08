@@ -11,6 +11,8 @@ public class PlayerControls : MonoBehaviour
     private InputAction press;
     private InputAction mark;
     private InputAction destroy;
+    private InputAction wheelDown;
+    private InputAction wheel;
     
     private Vector2 mousePosition;
 
@@ -19,7 +21,9 @@ public class PlayerControls : MonoBehaviour
 
 
     private PicrossMode currentMode;
-    
+
+    public PicrossLayerControl currentDetectedLayer;
+    public PicrossLayerControl currentLookingLayer;
 
     private void Awake()
     {
@@ -38,6 +42,11 @@ public class PlayerControls : MonoBehaviour
 
         destroy = actions.PicrossActions.Destroy;
         destroy.performed += DestroyPiece;
+
+
+        wheel = actions.PicrossActions.Wheel;
+        wheel.performed += CheckLayer;
+        wheel.Enable();
     }
 
     private void OnDisable()
@@ -53,19 +62,16 @@ public class PlayerControls : MonoBehaviour
         {
             case PicrossMode.None:
                 press.Enable();
+                wheel.Enable();
                 parent.currentPuzzleHints.layerDetection.EnableAllLayerDetection();
                 break;
             case PicrossMode.Mark:
                 mark.Enable();
                 parent.currentPuzzleHints.layerDetection.DisableAllLayerDetection();
-                parent.currentPuzzleHints.layerDetection.DisableAllLayerControl();
+
                 break;
             case PicrossMode.Destroy:
-                parent.currentPuzzleHints.layerDetection.DisableAllLayerDetection();
-                parent.currentPuzzleHints.layerDetection.DisableAllLayerControl();
                 destroy.Enable();
-                break;
-            case PicrossMode.Layer:
                 parent.currentPuzzleHints.layerDetection.DisableAllLayerDetection();
                 break;
             default:
@@ -82,25 +88,39 @@ public class PlayerControls : MonoBehaviour
         if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit))
         {
             if (hit.collider.TryGetComponent<PicrossLayerControl>(out PicrossLayerControl p))
+            {                  
+                currentLookingLayer = p;
+
+                if (currentDetectedLayer != null)
+                {
+                    if (currentDetectedLayer == p)
+                        return;
+
+                    if (!currentDetectedLayer.LayerState())
+                        currentDetectedLayer = p;
+                }
+                else
+                {
+                    currentDetectedLayer = p;
+                }
+            }
+            else
             {
-                p.DetectControl();
+                if(currentDetectedLayer != null)
+                {
+                    if (!currentDetectedLayer.LayerState())
+                    {
+                        currentDetectedLayer = null;
+                    }
+                }
+
+                currentLookingLayer = null;
+                
             }
         }
     }
     private void CameraDrag(InputAction.CallbackContext context)
     {
-        //if (context.performed)
-        //{
-        //    cinemachineControls.enabled = true;
-
-
-        //}
-        //else if (context.canceled)
-        //{
-        //    cinemachineControls.enabled = false;
-
-        //}
-
         if (context.performed)
         {
             cinemachineControls.Controllers[0].Input.Gain = 2;
@@ -117,6 +137,13 @@ public class PlayerControls : MonoBehaviour
 
     }
 
+    private void CheckLayer(InputAction.CallbackContext context)
+    {
+        if(currentDetectedLayer != null && currentLookingLayer == currentDetectedLayer)
+        {
+            parent.currentPuzzleHints.CheckLayers(currentDetectedLayer, (int)context.ReadValue<float>());
+        }
+    }
     private void MarkPiece(InputAction.CallbackContext context)
     {
         Debug.Log("Mark");
@@ -147,7 +174,10 @@ public class PlayerControls : MonoBehaviour
     private void DisableActions()
     {
         press.Disable();
+        wheel.Disable();
         mark.Disable();
         destroy.Disable();
     }
+
+    
 }
