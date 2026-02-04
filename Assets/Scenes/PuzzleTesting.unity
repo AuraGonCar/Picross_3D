@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e8b78ac948f05a46a6d8339a503172b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineHardLookAt
-  LookAtOffset: {x: 0, y: 0, z: 0}
+  LookAtOffset: {x: 0, y: 2, z: 0}
 --- !u!114 &231135538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -218,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineOrbitalFollow
   TargetOffset: {x: 0, y: 0, z: 0}
   TrackerSettings:
-    BindingMode: 0
+    BindingMode: 5
     PositionDamping: {x: 0, y: 0, z: 0}
     AngularDampingMode: 0
     RotationDamping: {x: 0, y: 0, z: 0}
@@ -236,7 +236,7 @@ MonoBehaviour:
       Radius: 4
       Height: -47.21
     SplineCurvature: 0
-  RecenteringTarget: 3
+  RecenteringTarget: 0
   HorizontalAxis:
     Value: 0
     Center: 0
@@ -431,8 +431,8 @@ Camera:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.59411377, g: 0.41389284, b: 0.6698113, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1523,7 +1523,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4f953fa76d92054fa1dfc86eda7ed6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InstanceManager
-  currentPuzzle: {fileID: 3084239776122192780, guid: 325655705b23920499c39afafbce2937, type: 3}
+  currentPuzzle: {fileID: 3596042103397151622, guid: d33b836d39ac12840a1a5964355f66ff, type: 3}
   currentPuzzleHints: {fileID: 0}
   vCam: {fileID: 231135539}
   controls: {fileID: 566876394}

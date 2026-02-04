@@ -32,6 +32,9 @@ public class PicrossHintManager : MonoBehaviour
     [HideInInspector] public InstanceManager parent;
     public PicrossLayerDetectionManagement layerDetection;
 
+    [SerializeField] private bool multipleSelect;
+    public List<PicrossPiece> currentSelection;
+
     public void SetDictionary()
     {
         if (piecesInPuzzleDictionary.Count <= 0)
@@ -161,53 +164,151 @@ public class PicrossHintManager : MonoBehaviour
         foreach(PicrossPiece p in minXPieces)
         {
             List<PicrossPiece> rowPieces = GetXRow(p);
-            int rowHintValue = 0;
+            List<PicrossPiece> correctPieces = new List<PicrossPiece>();
+
             foreach(PicrossPiece e in rowPieces)
             {
                 if (e.isPieceCorrect())
-                    rowHintValue++;
+                    correctPieces.Add(e);
+            }
+
+            if (correctPieces.Count >= 2)
+            {
+                int numberOfGroups = 1;
+
+                for (int i = 0; i < correctPieces.Count; i++)
+                {
+                    if (i + 1 >= correctPieces.Count)
+                        break;
+                    if (correctPieces[i + 1].currentPosition.x - correctPieces[i].currentPosition.x > 1)
+                        numberOfGroups++;
+                }
+
+                if (numberOfGroups == 2)
+                {
+                    foreach (PicrossPiece e in rowPieces)
+                    {
+                        e.NeedCircleX();
+                    }
+                }
+
+                if (numberOfGroups > 2)
+                {
+                    foreach (PicrossPiece e in rowPieces)
+                    {
+                        e.NeedSquareX();
+                    }
+                }
             }
 
             foreach (PicrossPiece e in rowPieces)
             {
-                e.SetHintXValue(rowHintValue);
+                e.SetHintXValue(correctPieces.Count);
+                e.ShowHintsX();
             }
+
+            
         }
 
         //Y
         foreach (PicrossPiece p in minYPieces)
         {
             List<PicrossPiece> rowPieces = GetYRow(p);
-            int rowHintValue = 0;
+            List<PicrossPiece> correctPieces = new List<PicrossPiece>();
+
             foreach (PicrossPiece e in rowPieces)
             {
                 if (e.isPieceCorrect())
-                    rowHintValue++;
+                    correctPieces.Add(e);
+            }
+            if (correctPieces.Count >= 2)
+            {
+                int numberOfGroups = 1;
+
+                for (int i = 0; i < correctPieces.Count; i++)
+                {
+                    if (i + 1 >= correctPieces.Count)
+                        break;
+                    if (correctPieces[i + 1].currentPosition.y - correctPieces[i].currentPosition.y > 1)
+                        numberOfGroups++;
+                }
+
+                if (numberOfGroups == 2)
+                {
+                    foreach (PicrossPiece e in rowPieces)
+                    {
+                        e.NeedCircleY();
+                    }
+                }
+
+                if (numberOfGroups > 2)
+                {
+                    foreach (PicrossPiece e in rowPieces)
+                    {
+                        e.NeedSquareY();
+                    }
+                }
             }
 
             foreach (PicrossPiece e in rowPieces)
             {
-                e.SetHintYValue(rowHintValue);
+                e.SetHintYValue(correctPieces.Count);
+                e.ShowHintsY();
             }
+
+            
         }
 
         //Z
         foreach (PicrossPiece p in minZPieces)
         {
             List<PicrossPiece> rowPieces = GetZRow(p);
-            int rowHintValue = 0;
-            foreach (PicrossPiece e in rowPieces)
-            {
-                if (e.isPieceCorrect())
-                    rowHintValue++;
-            }
+            List<PicrossPiece> correctPieces = new List<PicrossPiece>();
 
             foreach (PicrossPiece e in rowPieces)
             {
-                e.SetHintZValue(rowHintValue);
+                if (e.isPieceCorrect())
+                {
+                    correctPieces.Add(e);
+                }
             }
+            if (correctPieces.Count >= 2)
+            {
+                int numberOfGroups = 1;
+
+                for (int i = 0; i < correctPieces.Count; i++)
+                {
+                    if (i + 1 >= correctPieces.Count)
+                        break;
+                    if (correctPieces[i + 1].currentPosition.z - correctPieces[i].currentPosition.z > 1)
+                        numberOfGroups++;
+                }
+
+                if (numberOfGroups == 2)
+                {
+                    foreach (PicrossPiece e in rowPieces)
+                    {
+                        e.NeedCircleZ();
+                    }
+                }
+
+                if (numberOfGroups > 2)
+                {
+                    foreach (PicrossPiece e in rowPieces)
+                    {
+                        e.NeedSquareZ();
+                    }
+                }
+            }
+            foreach (PicrossPiece e in rowPieces)
+            {
+                e.SetHintZValue(correctPieces.Count);
+                e.ShowHintsZ();
+            }  
         }
     }
+
+    #region Get Rows
     private List<PicrossPiece> GetXRow(PicrossPiece basePiece)
     {
         List<PicrossPiece> pieces = new List<PicrossPiece>();
@@ -215,7 +316,7 @@ public class PicrossHintManager : MonoBehaviour
 
         float yValue = basePiece.currentPosition.y;
         float zValue = basePiece.currentPosition.z;
-        
+
         for (int i = minXPosition; i <= maxXPosition; i++)
         {
             Vector3 pos = new Vector3(i, yValue, zValue);
@@ -223,7 +324,7 @@ public class PicrossHintManager : MonoBehaviour
 
             if (!pieces.Contains(p))
                 pieces.Add(p);
-            
+
         }
 
         return pieces;
@@ -269,9 +370,8 @@ public class PicrossHintManager : MonoBehaviour
         }
 
         return pieces;
-    }
-    
-
+    } 
+    #endregion
 
     private void ClearMinMaxValues()
     {
@@ -284,7 +384,7 @@ public class PicrossHintManager : MonoBehaviour
         maxZPosition = 0;
     }
 
-
+    //Placeholder method
     public void RandomCorrectPieces()
     {
         if (piecesInPuzzle.Count > 0)
@@ -303,6 +403,7 @@ public class PicrossHintManager : MonoBehaviour
     }
 
 
+    #region Face updating
     public void SetFaceValueX(PicrossLayerControl currentLayer, int inputValue)
     {
         UpdateFaces(currentLayer, inputValue, xFaces);
@@ -360,8 +461,11 @@ public class PicrossHintManager : MonoBehaviour
                     faces[i].ActivateFace();
             }
         }
-    }
+    } 
+    #endregion
 
+    //Check if unused
+    #region Layer control
     public void BeginLayerControl()
     {
         parent.controls.ChangeControls(PicrossMode.Layer);
@@ -370,7 +474,8 @@ public class PicrossHintManager : MonoBehaviour
     public void EndLayerControl()
     {
         parent.controls.ChangeControls(PicrossMode.None);
-    }
+    } 
+    #endregion
 
     public void CheckLayers(PicrossLayerControl currentActiveLayer, int value)
     {
@@ -379,84 +484,211 @@ public class PicrossHintManager : MonoBehaviour
         if (currentActiveLayer.layerZ)
             SetFaceValueZ(currentActiveLayer, value);
     }
-    //Hint showing and hiding
 
+    #region Showi8ng and hiding hints
     public void ShowHintsX()
     {
-        if(selectedPiece != null)
+        if (multipleSelect)
         {
-            List<PicrossPiece> pieces = GetXRow(selectedPiece);
-
-            foreach(PicrossPiece p in pieces)
+            if(currentSelection.Count > 0)
             {
-                p.ShowHintsX();
+                foreach(PicrossPiece p in currentSelection)
+                {
+                    List<PicrossPiece> pieces = GetXRow(p);
+
+                    foreach (PicrossPiece e in pieces)
+                    {
+                        e.ShowHintsX();
+                    }
+                }
             }
         }
+        else
+        {
+            if (selectedPiece != null)
+            {
+                List<PicrossPiece> pieces = GetXRow(selectedPiece);
+
+                foreach (PicrossPiece p in pieces)
+                {
+                    p.ShowHintsX();
+                }
+            }
+        }
+        
     }
 
     public void HideHintsX()
     {
-        if (selectedPiece != null)
+        if (multipleSelect)
         {
-            List<PicrossPiece> pieces = GetXRow(selectedPiece);
-
-            foreach (PicrossPiece p in pieces)
+            if (currentSelection.Count > 0)
             {
-                p.HideHintX();
+                foreach (PicrossPiece p in currentSelection)
+                {
+                    List<PicrossPiece> pieces = GetXRow(p);
+
+                    foreach (PicrossPiece e in pieces)
+                    {
+                        e.HideHintX();
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (selectedPiece != null)
+            {
+                List<PicrossPiece> pieces = GetXRow(selectedPiece);
+
+                foreach (PicrossPiece p in pieces)
+                {
+                    p.HideHintX();
+                }
             }
         }
     }
 
     public void ShowHintsY()
     {
-        if (selectedPiece != null)
+        if (multipleSelect)
         {
-            List<PicrossPiece> pieces = GetYRow(selectedPiece);
-
-            foreach (PicrossPiece p in pieces)
+            if (currentSelection.Count > 0)
             {
-                p.ShowHintsY();
+                foreach (PicrossPiece p in currentSelection)
+                {
+                    List<PicrossPiece> pieces = GetXRow(p);
+
+                    foreach (PicrossPiece e in pieces)
+                    {
+                        e.ShowHintsY();
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (selectedPiece != null)
+            {
+                List<PicrossPiece> pieces = GetXRow(selectedPiece);
+
+                foreach (PicrossPiece p in pieces)
+                {
+                    p.ShowHintsY();
+                }
             }
         }
     }
 
     public void HideHintsY()
     {
-        if (selectedPiece != null)
+        if (multipleSelect)
         {
-            List<PicrossPiece> pieces = GetYRow(selectedPiece);
-
-            foreach (PicrossPiece p in pieces)
+            if (currentSelection.Count > 0)
             {
-                p.HideHintsY();
+                foreach (PicrossPiece p in currentSelection)
+                {
+                    List<PicrossPiece> pieces = GetXRow(p);
+
+                    foreach (PicrossPiece e in pieces)
+                    {
+                        e.HideHintsY();
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (selectedPiece != null)
+            {
+                List<PicrossPiece> pieces = GetXRow(selectedPiece);
+
+                foreach (PicrossPiece p in pieces)
+                {
+                    p.HideHintsY();
+                }
             }
         }
     }
 
     public void ShowHintsZ()
     {
-        if (selectedPiece != null)
+        if (multipleSelect)
         {
-            List<PicrossPiece> pieces = GetZRow(selectedPiece);
-
-            foreach (PicrossPiece p in pieces)
+            if (currentSelection.Count > 0)
             {
-                p.ShowHintsZ();
+                foreach (PicrossPiece p in currentSelection)
+                {
+                    List<PicrossPiece> pieces = GetXRow(p);
+
+                    foreach (PicrossPiece e in pieces)
+                    {
+                        e.ShowHintsZ();
+                    }
+                }
+            }
+        }
+        else
+        {
+            if (selectedPiece != null)
+            {
+                List<PicrossPiece> pieces = GetXRow(selectedPiece);
+
+                foreach (PicrossPiece p in pieces)
+                {
+                    p.ShowHintsZ();
+                }
             }
         }
     }
 
     public void HideHintsZ()
     {
-        if (selectedPiece != null)
+        if (multipleSelect)
         {
-            List<PicrossPiece> pieces = GetZRow(selectedPiece);
-
-            foreach (PicrossPiece p in pieces)
+            if (currentSelection.Count > 0)
             {
-                p.HideHintsZ();
+                foreach (PicrossPiece p in currentSelection)
+                {
+                    List<PicrossPiece> pieces = GetXRow(p);
+
+                    foreach (PicrossPiece e in pieces)
+                    {
+                        e.HideHintsZ();
+                    }
+                }
             }
         }
+        else
+        {
+            if (selectedPiece != null)
+            {
+                List<PicrossPiece> pieces = GetXRow(selectedPiece);
+
+                foreach (PicrossPiece p in pieces)
+                {
+                    p.HideHintsZ();
+                }
+            }
+        }
+    } 
+    #endregion
+
+    public void ActivateMultipleSelection()
+    {
+        multipleSelect = true;
+        selectedPiece = null;
+    }
+
+    public void DeactivateMultipleSelection()
+    {
+        multipleSelect = false;
+        currentSelection.Clear();
+    }
+
+    public bool isMultiple()
+    {
+        return multipleSelect;
     }
 }
 

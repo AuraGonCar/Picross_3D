@@ -16,16 +16,31 @@ public class PicrossHintManagerEditor : Editor
 
     private void OnSceneGUI()
     {
-        if(Selection.activeGameObject!= null)
+        if (!current.isMultiple())
         {
-            if(Selection.activeGameObject != current.selectedPiece)
+            if (Selection.activeGameObject != null)
             {
-                if(Selection.activeGameObject.TryGetComponent<PicrossPiece>(out PicrossPiece p))
+                if (Selection.activeGameObject != current.selectedPiece)
                 {
-                    current.selectedPiece = p;
+                    if (Selection.activeGameObject.TryGetComponent<PicrossPiece>(out PicrossPiece p))
+                    {
+                        current.selectedPiece = p;
+                    }
                 }
             }
         }
+        else
+        {
+            if (Selection.activeGameObject != null)
+            {
+                if (Selection.activeGameObject.TryGetComponent<PicrossPiece>(out PicrossPiece p))
+                {
+                    if (!current.currentSelection.Contains(p))
+                        current.currentSelection.Add(p);
+                }
+            }
+        }
+        
     }
 
     public override void OnInspectorGUI()
@@ -48,17 +63,44 @@ public class PicrossHintManagerEditor : Editor
 
         if (GUILayout.Button("Set correct piece"))
         {
-            if(current.selectedPiece != null)
+            if (current.isMultiple())
             {
-                current.selectedPiece.SetPieceCorrect();
+                if(current.currentSelection.Count > 0)
+                {
+                    foreach(PicrossPiece p in current.currentSelection)
+                    {
+                        p.SetPieceCorrect();
+                    }
+                }
             }
+            else
+            {
+                if (current.selectedPiece != null)
+                {
+                    current.selectedPiece.SetPieceCorrect();
+                }
+            }
+            
         }
 
         if (GUILayout.Button("Set empty piece"))
         {
-            if (current.selectedPiece != null)
+            if (current.isMultiple())
             {
-                current.selectedPiece.SetPieceEmpty();
+                if (current.currentSelection.Count > 0)
+                {
+                    foreach (PicrossPiece p in current.currentSelection)
+                    {
+                        p.SetPieceEmpty();
+                    }
+                }
+            }
+            else
+            {
+                if (current.selectedPiece != null)
+                {
+                    current.selectedPiece.SetPieceEmpty();
+                }
             }
         }
 
@@ -104,5 +146,15 @@ public class PicrossHintManagerEditor : Editor
             current.HideHintsZ();
         }
 
+        GUILayout.Space(5);
+
+        if (GUILayout.Button("Activate Multiple Selection"))
+        {
+            current.ActivateMultipleSelection();
+        }
+        if (GUILayout.Button("Deactivate Multiple Selection"))
+        {
+            current.DeactivateMultipleSelection();
+        }
     }
 }
